@@ -1,5 +1,7 @@
 *.DS_Store
 *.log
 *.fdb_latexmk
-*.syctex.gz
+*.synctex.gz
 *.aux
+\#*\#
+*~

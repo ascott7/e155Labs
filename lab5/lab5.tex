@@ -1,0 +1,57 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.9in]{geometry}
+\usepackage{amssymb,amsmath,enumerate,mathtools}
+\usepackage{graphics,graphicx}
+\usepackage{framed, listings}
+
+\lstset{
+    language=C,                            % sets the language for the code
+    basicstyle=\scriptsize\ttfamily,       % for the actual code
+    morekeywords={printf, time_t, scanf},  % adds keywords
+    keywordstyle=\bfseries,                % for keywords
+    commentstyle=\scriptsize\ttfamily,     % for comments 
+    showstringspaces=false                 % prevents underscores from appearing in output
+}
+
+\begin{document}
+\begin{flushright}
+Andrew Scott\\
+E155\\
+Lab 5\\
+October 12, 2015
+\end{flushright}
+
+\begin{center}
+Lab 5: Digital Audio
+\end{center}
+
+\noindent\textbf{Introduction}
+
+In this lab, I wrote a C program to play music. The way this works is that the code generates a square wave on a GPIO pin from the Raspberry Pi, and then that signal passes through an audio amplifier into a speaker that makes the appropriate sound.
+
+\noindent\textbf{Design and Testing Methodology}
+
+Most of the focus in this lab was writing the C code to control the Raspberry Pi, leaving a fairly simple breadboard circuit without too many design decisions to be made. I followed a diagram in the data sheet for the LM386 amplifier without resistors and capacitors to make the amplification circuit, but there was a really loud buzzing when I turned on the power. After adding a capacitor between the amplifier and the speaker, as well as a pull down resistor between the GPIO pin and the amplifier, the buzzing decreased to a manageable level. However, I later realized that the source of the buzzing was the fact that I was powering my Pi from a wall outlet and not from the same 5V supply that is powering the amp. After fixing this issue, the buzzing disappeared. I tested the circuit by running it, which showed that it was properly playing the music from the Pi.
+
+For the software, there were several design decisions to be made. The decision of how to implement the functions to set up GPIO pins and then read and write to them was made easy due to the fact that the class worked them out together. The same can be said for the sleep function, which causes the program to wait and do nothing for a specified period of time. The one part of the lab that we didn't work out in class was how to generate a square wave on one of the GPIO pins (which would translate to a musical note when it went thorough the speaker). I decided to do this by writing a 1 to the GPIO pin, sleeping for half a cycle (according to the Hz of the note), and then writing a 0 to the GPIO pin and again sleeping for half a cycle. Doing this required knowing how many times to do the on/off cycle in order to achieve the desired length of the note, which I was able to calculate with the formula $\dfrac{Hz \times millis}{1000}$. This works because it calculates
+$$ \dfrac{cycles}{seconds} \times {milliseconds} \times \dfrac{1 second}{1000 \ milliseconds} = cycles$$ I then used a for loop that ran for the calculated number of cycles, spending half of each cycle on and half of each cycle off. I tested this code by using some print statements to make sure that the number of cycles were being calculated correctly and then by running the code while hooked up to the speaker circuit, which showed that the code was producing the appropriate signals since the music sounded right.
+
+\noindent\textbf{Results and Discussion}\\
+I was able to finish this entire lab. The music played clearly by the time I finished without any buzzing, which was a relief to finally get rid of.
+
+\noindent\textbf{Conclusion}\\
+I spent about 5 hours on this lab. I spent awhile trying to figure out the source of the buzzing which was frustrating, but overall everything went well.
+
+
+\pagebreak
+
+\noindent\textbf{Breadboard Schematic}\\\\
+\includegraphics[scale=0.15]{lab5schematic}
+
+
+\noindent\textbf{C Code}\\
+\lstset{language=C}
+\lstinputlisting{lab5_as.c}
+
+\end{document}
+
